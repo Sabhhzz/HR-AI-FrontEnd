@@ -10,6 +10,9 @@ import Automation from './pages/Automation'
 import Reports from './pages/Reports'
 import DataStorage from './pages/DataStorage'
 import Upload from './pages/Upload'
+import ProtectedRoute from './components/ProtectedRoute'
+
+
 
 function App() {
   return (
@@ -25,6 +28,14 @@ function App() {
       <Route path="/reports" element={<Reports />} />
       <Route path="/data-storage" element={<DataStorage />} />
       <Route path="/upload" element={<Upload />} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/ai-screening" element={<ProtectedRoute><AIScreening /></ProtectedRoute>} />
+      <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
+      <Route path="/candidates" element={<ProtectedRoute><Candidates /></ProtectedRoute>} />
+      <Route path="/candidates/:id" element={<ProtectedRoute><CandidateDetail /></ProtectedRoute>} />
+      <Route path="/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
+      <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+      <Route path="/data-storage" element={<ProtectedRoute><DataStorage /></ProtectedRoute>} />
     </Routes>
   )
 }

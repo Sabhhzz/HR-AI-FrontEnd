@@ -150,8 +150,8 @@ export default function Landing() {
                   Upload Resume
                 </Button>
               </Link>
-              <Link to="/dashboard">
-                <Button className="bg-white text-black hover:bg-white/90">HR Dashboard</Button>
+              <Link to="/login">
+                <Button className="bg-white text-black hover:bg-white/90">HR Login</Button>
               </Link>
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link to="/dashboard">
+              <Link to="/login">
                 <Button
                   size="lg"
                   className="group h-12 bg-white px-8 text-base text-black shadow-xl shadow-white/10 hover:bg-white/90"
@@ -273,12 +273,12 @@ export default function Landing() {
             <p className="mb-8 text-lg text-white/70">
               Streamline your recruitment workflow with AI-assisted screening
             </p>
-            <Link to="/dashboard">
+            <Link to="/login">
               <Button
                 size="lg"
                 className="group h-12 bg-white px-8 text-base text-black shadow-xl shadow-white/10 hover:bg-white/90"
               >
-                Access HR Dashboard
+                HR Login
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
