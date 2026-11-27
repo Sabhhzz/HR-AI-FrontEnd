@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -10,24 +11,17 @@ import Automation from './pages/Automation'
 import Reports from './pages/Reports'
 import DataStorage from './pages/DataStorage'
 import Upload from './pages/Upload'
-import ProtectedRoute from './components/ProtectedRoute'
-
-
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
     <Routes>
+      {/* Public */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/ai-screening" element={<AIScreening />} />
-      <Route path="/ranking" element={<Ranking />} />
-      <Route path="/candidates" element={<Candidates />} />
-      <Route path="/candidates/:id" element={<CandidateDetail />} />
-      <Route path="/automation" element={<Automation />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/data-storage" element={<DataStorage />} />
       <Route path="/upload" element={<Upload />} />
+
+      {/* HR only */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/ai-screening" element={<ProtectedRoute><AIScreening /></ProtectedRoute>} />
       <Route path="/ranking" element={<ProtectedRoute><Ranking /></ProtectedRoute>} />
@@ -36,6 +30,9 @@ function App() {
       <Route path="/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       <Route path="/data-storage" element={<ProtectedRoute><DataStorage /></ProtectedRoute>} />
+
+      {/* Anything else */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

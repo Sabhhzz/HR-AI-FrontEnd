@@ -41,12 +41,48 @@ const mockCandidateData = {
     recommendation: "Shortlist",
     appliedDate: "2025-01-14",
   },
+    "3": {
+    id: 3, name: "Emily Rodriguez", email: "emily.rodriguez@email.com", score: 76, status: "Shortlisted",
+    strengths: ["Solid Vue.js and Python experience", "Good database fundamentals"],
+    weaknesses: ["Limited cloud experience", "Short tenure at previous roles"],
+    recommendation: "Shortlist", appliedDate: "2025-01-18",
+  },
+  "4": {
+    id: 4, name: "David Kim", email: "david.kim@email.com", score: 85, status: "Shortlisted",
+    strengths: ["Strong React and TypeScript skills", "Experience with GraphQL APIs"],
+    weaknesses: ["Limited backend experience"],
+    recommendation: "Shortlist", appliedDate: "2025-01-17",
+  },
+  "5": {
+    id: 5, name: "Jessica Williams", email: "jessica.williams@email.com", score: 65, status: "Rejected",
+    strengths: ["Good HTML/CSS fundamentals"],
+    weaknesses: ["Limited professional experience", "Few skills match the role"],
+    recommendation: "Reject", appliedDate: "2025-01-20",
+  },
+  "6": {
+    id: 6, name: "James Wilson", email: "james.wilson@email.com", score: 58, status: "Rejected",
+    strengths: ["Familiar with React basics"],
+    weaknesses: ["Under 1 year of experience", "No backend or cloud exposure"],
+    recommendation: "Reject", appliedDate: "2025-01-21",
+  },
+  "7": {
+    id: 7, name: "Lisa Anderson", email: "lisa.anderson@email.com", score: 82, status: "Pending",
+    strengths: ["6 years of backend experience", "Strong PostgreSQL and CI/CD background"],
+    weaknesses: ["Limited frontend experience"],
+    recommendation: "Shortlist", appliedDate: "2025-01-16",
+  },
+  "8": {
+    id: 8, name: "Robert Taylor", email: "robert.taylor@email.com", score: 79, status: "Pending",
+    strengths: ["Full-stack JavaScript experience", "Comfortable with MySQL"],
+    weaknesses: ["Only 2 years of experience"],
+    recommendation: "Shortlist", appliedDate: "2025-01-19",
+  },
 }
 
 export default function CandidateDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const candidate = mockCandidateData[id] || mockCandidateData["1"]
+  const candidate = Object.hasOwn(mockCandidateData, id) ? mockCandidateData[id] : null
 
   const [interviewScore, setInterviewScore] = useState("")
   const [interviewFeedback, setInterviewFeedback] = useState("")
@@ -54,12 +90,20 @@ export default function CandidateDetail() {
   const [isSaving, setIsSaving] = useState(false)
 
   const handleUpdateResult = () => {
-    if (!interviewScore || !interviewFeedback || !finalStatus) {
-      alert("Please fill in all interview fields")
-      return
-    }
+  if (isSaving) return // block double clicks
 
-    setIsSaving(true)
+  if (!interviewScore || !interviewFeedback.trim() || !finalStatus) {
+    alert("Please fill in all interview fields")
+    return
+  }
+
+  const score = Number(interviewScore)
+  if (!Number.isFinite(score) || score < 0 || score > 100) {
+    alert("Interview score must be a number between 0 and 100")
+    return
+  }
+
+  setIsSaving(true)
     setTimeout(() => {
       setIsSaving(false)
       alert(`Interview result updated! Email will be automatically sent to ${candidate.name}`)
@@ -79,7 +123,17 @@ export default function CandidateDetail() {
     if (score >= 70) return "text-yellow-500"
     return "text-red-500"
   }
-
+  if (!candidate) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4 text-center">
+      <h1 className="text-3xl font-bold text-foreground">Candidate not found</h1>
+      <p className="text-muted-foreground">No candidate exists with ID {id}.</p>
+      <Link to="/candidates">
+        <Button>Back to Candidates</Button>
+      </Link>
+    </div>
+  )
+}
   return (
     <div className="min-h-screen bg-background">
       <nav className="border-b border-border">
@@ -193,6 +247,7 @@ export default function CandidateDetail() {
                   <Label htmlFor="interview-feedback">Interview Feedback</Label>
                   <Textarea
                     id="interview-feedback"
+                    maxLength={2000}
                     placeholder="Candidate demonstrated strong technical skills and good cultural fit. Excelled in system design questions..."
                     value={interviewFeedback}
                     onChange={(e) => setInterviewFeedback(e.target.value)}

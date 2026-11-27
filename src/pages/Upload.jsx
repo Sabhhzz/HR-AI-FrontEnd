@@ -6,8 +6,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload as UploadIcon, CheckCircle2, ArrowLeft } from "lucide-react"
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5 MB
+const ALLOWED_EXTENSIONS = ["pdf", "doc", "docx"]
+const ALLOWED_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]
+
 export default function Upload() {
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,15 +26,43 @@ export default function Upload() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (isSubmitting) return // block double submits
+
+    if (!formData.resume) {
+      setError("Please select a resume to upload.")
+      return
+    }
+
+    setIsSubmitting(true)
     setTimeout(() => {
       setSubmitted(true)
     }, 500)
   }
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, resume: e.target.files[0] })
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const ext = file.name.split(".").pop().toLowerCase()
+    const badType =
+      !ALLOWED_EXTENSIONS.includes(ext) || (file.type && !ALLOWED_TYPES.includes(file.type))
+
+    if (badType) {
+      setError("Please upload a PDF or Word document (.pdf, .doc, .docx).")
+      setFormData({ ...formData, resume: null })
+      e.target.value = ""
+      return
     }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File is too large. Maximum size is 5 MB.")
+      setFormData({ ...formData, resume: null })
+      e.target.value = ""
+      return
+    }
+
+    setError("")
+    setFormData({ ...formData, resume: file })
   }
 
   if (submitted) {
@@ -89,6 +127,7 @@ export default function Upload() {
                 <Input
                   id="name"
                   placeholder="John Doe"
+                  maxLength={100}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
@@ -101,6 +140,7 @@ export default function Upload() {
                   id="email"
                   type="email"
                   placeholder="john@example.com"
+                  maxLength={254}
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -108,7 +148,7 @@ export default function Upload() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="resume">Resume (PDF or DOCX)</Label>
+                <Label htmlFor="resume">Resume (PDF or DOCX, max 5 MB)</Label>
                 <Input
                   id="resume"
                   type="file"
@@ -117,15 +157,20 @@ export default function Upload() {
                   required
                   className="cursor-pointer"
                 />
+                {error && <p className="text-sm text-red-400">{error}</p>}
                 {formData.resume && (
                   <p className="text-sm text-muted-foreground">Selected: {formData.resume.name}</p>
                 )}
               </div>
 
-              <Button type="submit" className="w-full gap-2">
+              <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
                 <UploadIcon className="h-4 w-4" />
-                Submit Resume
+                {isSubmitting ? "Submitting..." : "Submit Resume"}
               </Button>
+
+              <p className="text-center text-xs text-muted-foreground">
+                Demo only: files are not uploaded or stored anywhere.
+              </p>
             </form>
           </CardContent>
         </Card>
